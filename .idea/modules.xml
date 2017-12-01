@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/CampbellsApp.iml" filepath="$PROJECT_DIR$/CampbellsApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/campbell'sapp/campbell'sapp.iml" filepath="$PROJECT_DIR$/campbell'sapp/campbell'sapp.iml" />
+    </modules>
+  </component>
+</project>

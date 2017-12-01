@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Campbell\'s App</string>
+    <string name="tab_text_1">Home</string>
+    <string name="tab_text_2">Timer</string>
+    <string name="tab_text_3">Student Database</string>
+    <string name="tab_text_4">PC Status</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_signinout">Sign In/Out</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="timer_format">This is the timer section. AKA section: %d</string>
+</resources>
