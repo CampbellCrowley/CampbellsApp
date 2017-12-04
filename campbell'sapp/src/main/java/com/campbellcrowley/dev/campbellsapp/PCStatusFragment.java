@@ -1,6 +1,5 @@
 package com.campbellcrowley.dev.campbellsapp;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,8 +56,6 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
   private static AsyncResponse asyncTaskDelegate = null;
   private static Timer Interval;
 
-  private OnFragmentInteractionListener mListener;
-
   public PCStatusFragment() {
     CookieManager cookieManager = new CookieManager();
     CookieHandler.setDefault(cookieManager);
@@ -70,15 +67,14 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
     Bundle args = new Bundle();
     args.putInt(ARG_SECTION_NUMBER, sectionNumber);
     fragment.setArguments(args);
-
     return fragment;
   }
 
-  private static void getInfo() {
+  public static void sendAction(String action) {
     sendRequest task = new sendRequest();
     task.delegate = asyncTaskDelegate;
     try {
-      task.execute(new URL("https://dev.campbellcrowley.com/secure/pc/get-info"));
+      task.execute(new URL("https://dev.campbellcrowley.com/secure/pc/" + action));
     } catch (MalformedURLException e) {
       clearRows();
       addRow("Failed to get latest info! Campbell broke something...");
@@ -126,7 +122,7 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
     (Interval = new Timer()).scheduleAtFixedRate(new TimerTask() {
       @Override
       public void run() {
-        getInfo();
+        sendAction("get-info");
       }
     }, 0, 8000);
   }
@@ -243,16 +239,7 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
       final String finalRequest = request;
       buttonParent.getChildAt(i).setOnClickListener(new View.OnClickListener() {
         public void onClick(View v) {
-          sendRequest task = new sendRequest();
-          task.delegate = asyncTaskDelegate;
-          try {
-            task.execute(new URL("https://dev.campbellcrowley.com/secure/pc/" + finalRequest));
-            ToggleButtonEnabled(false);
-          } catch (MalformedURLException e) {
-            clearRows();
-            addRow("Failed to get latest info! Campbell broke something...");
-            e.printStackTrace();
-          }
+          sendAction(finalRequest);
         }
       });
     }
@@ -262,30 +249,6 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
 
   public void showMessage(String message) {
     Snackbar.make(getActivity().findViewById(R.id.main_content), message, Snackbar.LENGTH_LONG).show();
-  }
-
-  // TODO: Rename method, update argument and hook method into UI event
-  public void onButtonPressed(Uri uri) {
-    if (mListener != null) {
-      mListener.onFragmentInteraction(uri);
-    }
-  }
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    if (context instanceof OnFragmentInteractionListener) {
-      mListener = (OnFragmentInteractionListener) context;
-    } else {
-      throw new RuntimeException(context.toString()
-              + " must implement OnFragmentInteractionListener");
-    }
-  }
-
-  @Override
-  public void onDetach() {
-    super.onDetach();
-    mListener = null;
   }
 
   /**
@@ -349,7 +312,8 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
     @Override
     protected void onPostExecute(List<String> responses) {
       Log.i("PCStatusFragment", "Downloaded " + responses.size() + " responses.");
-      delegate.processFinish(responses);
+      if (delegate != null)
+        delegate.processFinish(responses);
     }
   }
 }

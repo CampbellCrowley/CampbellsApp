@@ -337,7 +337,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, PC
     @Override
     protected void onPostExecute(List<String> responses) {
       Log.i("MainActivitySignIn", "Downloaded " + responses.size() + " responses.");
-      delegate.processFinish(responses);
+      if (delegate != null)
+        delegate.processFinish(responses);
     }
   }
 
