@@ -8,10 +8,8 @@
     <string name="action_signinout">Sign In/Out</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="timer_format">This is the timer section. AKA section: %d</string>
-    <string name="pcstatus_format">This is the PC Status section. AKA section: %d</string>
+    <string name="pcstatus_format">The computer is currently %s</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="button_presspower">Press Power</string>
     <string name="button_holdpower">Hold Power</string>
     <string name="button_pressreset">Press Reset</string>
