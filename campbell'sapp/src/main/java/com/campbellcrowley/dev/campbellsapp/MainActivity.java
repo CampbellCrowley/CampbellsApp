@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, PC
                   tokenState = UNVALIDATED;
                   userLevel = 0;
                   validateToken();
-                } else {
                 }
               }
             });
@@ -178,10 +177,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, PC
         });
       }
       return true;
-    }
-
-    //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings) {
+    } else if (id == R.id.action_settings) {
+      Intent intent = new Intent(this, SettingsActivity.class);
+      startActivity(intent);
       return true;
     }
 

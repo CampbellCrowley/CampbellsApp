@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.campbellcrowley.dev.campbellsapp">
 
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -20,6 +23,7 @@
             </intent-filter>
         </activity>
 
+        <!-- Widgets -->
         <receiver
             android:name=".PressPower"
             android:label="Press Power">
@@ -64,6 +68,36 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/press_power_info"/>
         </receiver>
+        <!-- /Widgets -->
+        <!-- Server events -->
+        <service android:name=".FirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+        <service android:name=".FirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+        <!-- /Server events -->
+        <!-- Notifications -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_text_manager"/>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent"/>
+        <!-- /Notifications -->
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.campbellcrowley.dev.campbellsapp.MainActivity"/>
+        </activity>
     </application>
 
 </manifest>

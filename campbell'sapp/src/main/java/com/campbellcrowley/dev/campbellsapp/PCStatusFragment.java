@@ -1,5 +1,6 @@
 package com.campbellcrowley.dev.campbellsapp;
 
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -103,9 +105,13 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
     if (rootView == null) return;
     LinearLayout scrollView = rootView.findViewById(R.id.moreinfo);
     if (scrollView == null) return;
-    TextView newRow = new TextView(MainActivity.getAppContext());
-    newRow.setText(text);
-    scrollView.addView(newRow);
+    try {
+      TextView newRow = new TextView(MainActivity.getAppContext());
+      newRow.setText(text);
+      scrollView.addView(newRow);
+    } catch (Resources.NotFoundException e) {
+      e.printStackTrace();
+    }
   }
 
   private static void UpdateGraphData(double[] newData) {
@@ -147,7 +153,11 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
           stateNow = output.get(0).split("STATE--: ")[1].charAt(1) == 'n';
           if (rootView != null) {
             TextView textView = rootView.findViewById(R.id.content);
-            textView.setText(getString(R.string.pcstatus_format, stateNow ? "On" : "Off"));
+            try {
+              textView.setText(getString(R.string.pcstatus_format, stateNow ? "On" : "Off"));
+            } catch (IllegalStateException e) {
+              e.printStackTrace();
+            }
           }
           if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             String[] moreInfo = output.get(0).split("Server Start")[0].split("\n");
@@ -270,7 +280,7 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
     private AsyncResponse delegate = null;
 
     protected List<String> doInBackground(URL... urls) {
-      List responses = new ArrayList<String>();
+      List<String> responses = new ArrayList<>();
       for (int i = 0; i < urls.length; i++) {
         responses.add(sendHttpRequest(urls[i], "idtoken=" + getToken(), "POST"));
       }
@@ -303,6 +313,9 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
         e.printStackTrace();
       } catch (MalformedURLException e) {
         e.printStackTrace();
+      } catch (FileNotFoundException e) {
+        Log.i("PCStatusFragment", "Received 4XX from server, not authorized? " + e.getMessage());
+        return "You are not authorized to do that.";
       } catch (IOException e) {
         e.printStackTrace();
       }

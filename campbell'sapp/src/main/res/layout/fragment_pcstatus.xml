@@ -1,68 +1,68 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              tools:context="com.campbellcrowley.dev.campbellsapp.PCStatusFragment">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.campbellcrowley.dev.campbellsapp.PCStatusFragment">
 
     <LinearLayout
-        android:id="@+id/powerbuttons_parent"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/button_row_height"
-        android:divider="@color/colorAccent"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/button_presspower"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/button_presspower"/>
-
-        <Button
-            android:id="@+id/button_holdpower"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/button_holdpower"/>
-
-        <Button
-            android:id="@+id/button_pressreset"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/button_pressreset"/>
-
-        <Button
-            android:id="@+id/button_wake"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/button_wake"/>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/content"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem"/>
+        android:orientation="vertical">
 
-    <com.jjoe64.graphview.GraphView
-        android:id="@+id/graph"
-        android:layout_width="match_parent"
-        android:layout_height="200dip"/>
+        <LinearLayout
+            android:id="@+id/powerbuttons_parent"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_row_height"
+            android:divider="@color/colorAccent"
+            android:orientation="horizontal">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <Button
+                android:id="@+id/button_presspower"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/button_presspower"/>
+
+            <Button
+                android:id="@+id/button_holdpower"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/button_holdpower"/>
+
+            <Button
+                android:id="@+id/button_pressreset"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/button_pressreset"/>
+
+            <Button
+                android:id="@+id/button_wake"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/button_wake"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:textAppearance="?attr/textAppearanceListItem"/>
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graph"
+            android:layout_width="match_parent"
+            android:layout_height="200dip"
+            />
 
         <LinearLayout
             android:id="@+id/moreinfo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"/>
-    </ScrollView>
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

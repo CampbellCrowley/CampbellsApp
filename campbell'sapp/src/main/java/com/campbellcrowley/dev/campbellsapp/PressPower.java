@@ -59,15 +59,23 @@ public class PressPower extends AppWidgetProvider {
     if (PRESS_POWER.equals(intent.getAction())) {
       sendAction("press-power");
       Log.i("Press-Power Widget", "Pressed Power!");
+      if (SettingsActivity.getBoolean(SettingsActivity.KEY_NOTIF_POWER_PRESSED))
+        TextNotificationManager.notify(context, "Sent request to press power.", 0, 0);
     } else if (HOLD_POWER.equals(intent.getAction())) {
       sendAction("hold-power");
       Log.i("Press-Power Widget", "Held Power!");
+      if (SettingsActivity.getBoolean(SettingsActivity.KEY_NOTIF_POWER_HELD))
+        TextNotificationManager.notify(context, "Sent request to hold power.", 0, 0);
     } else if (PRESS_RESET.equals(intent.getAction())) {
       sendAction("press-reset");
       Log.i("Press-Power Widget", "Pressed Reset!");
+      if (SettingsActivity.getBoolean(SettingsActivity.KEY_NOTIF_RESET_PRESSED))
+        TextNotificationManager.notify(context, "Sent request to press reset.", 0, 0);
     } else if (WAKE.equals(intent.getAction())) {
       sendAction("wake");
       Log.i("Press-Power Widget", "Sent magic packet!");
+      if (SettingsActivity.getBoolean(SettingsActivity.KEY_NOTIF_WAKE_EVENT))
+        TextNotificationManager.notify(context, "Sent request to wake computer.", 0, 0);
     }
   }
 

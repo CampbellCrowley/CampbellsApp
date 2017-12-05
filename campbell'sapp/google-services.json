@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "275682034627",
-    "project_id": "campbells-app"
+    "firebase_url": "https://campbells-app.firebaseio.com",
+    "project_id": "campbells-app",
+    "storage_bucket": "campbells-app.appspot.com"
   },
   "client": [
     {
@@ -12,6 +14,10 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "275682034627-pilkveg9ccu3id9e84dfiel61qkpo9p1.apps.googleusercontent.com",
+          "client_type": 3
+        },
         {
           "client_id": "275682034627-qe6qsb6jbsonef00uoe5vrt5qsgfemc9.apps.googleusercontent.com",
           "client_type": 3
@@ -38,11 +44,16 @@
           }
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "275682034627-pilkveg9ccu3id9e84dfiel61qkpo9p1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     },
@@ -54,6 +65,10 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "275682034627-pilkveg9ccu3id9e84dfiel61qkpo9p1.apps.googleusercontent.com",
+          "client_type": 3
+        },
         {
           "client_id": "275682034627-4ut5osk8t831hpn2hvici22m13m26709.apps.googleusercontent.com",
           "client_type": 1,
@@ -80,11 +95,16 @@
           }
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "275682034627-pilkveg9ccu3id9e84dfiel61qkpo9p1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
