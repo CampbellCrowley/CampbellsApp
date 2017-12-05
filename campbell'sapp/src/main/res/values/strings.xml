@@ -21,7 +21,7 @@
 
     <string name="text_manager_notification_title_template">%1$s</string>
 
-    <string name="text_manager_notification_placeholder_text_template">%1$s This may still fail if you are not signed in in the app or something else goes wrong.</string>
+    <string name="text_manager_notification_placeholder_text_template">%1$s</string>
 
     <string name="action_share">Share</string>
     <string name="action_reply">Reply</string>

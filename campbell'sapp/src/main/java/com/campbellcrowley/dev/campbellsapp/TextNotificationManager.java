@@ -7,11 +7,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -44,30 +42,38 @@ public class TextNotificationManager {
    * @see #cancel(Context)
    */
   public static void notify(final Context context,
-                            final String exampleString, final int number, final long eventTime) {
+                            final String mainText, final String moreText, final long eventTime) {
     boolean notificationsEnabled = SettingsActivity.getBoolean(SettingsActivity.KEY_NOTIF_GLOBAL_ENABLE);
     Log.i("NotificationManager", "Notifications enabled: " + notificationsEnabled);
     if (!notificationsEnabled) return;
 
-    final Resources res = context.getResources();
+    //final Resources res = context.getResources();
 
     // This image is used as the notification's large icon (thumbnail).
     // TODO: Remove this if your notification has no relevant thumbnail.
-    final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
+    //final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
 
 
     final long finalEventTime = eventTime == 0 ? System.currentTimeMillis() : eventTime;
-    final String ticker = exampleString;
-    final String title = res.getString(
-            R.string.text_manager_notification_title_template, exampleString);
-    final String text = res.getString(
-            R.string.text_manager_notification_placeholder_text_template, exampleString);
+    final String ticker = mainText;
+    final String title = mainText;
+    final String text = moreText;
+    final long[] vibrateOn = new long[]{0, 700, 100, 50, 100, 50};
+    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+    v.vibrate(1000);
+    v.cancel();
 
     final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "PCStatusChannel")
 
             // Set appropriate defaults for the notification light, sound,
             // and vibration.
             .setDefaults(Notification.DEFAULT_ALL)
+
+            .setVisibility(Notification.VISIBILITY_PUBLIC)
+
+            .setVibrate(SettingsActivity.getBoolean("notification_new_message_vibrate") ? vibrateOn : new long[]{})
+
+            .setSound(Uri.parse(SettingsActivity.getString("notification_new_message_ringtone")))
 
             // Set required fields, including the small icon, the
             // notification title, and text.
@@ -79,18 +85,18 @@ public class TextNotificationManager {
 
             // Use a default priority (recognized on devices running Android
             // 4.1 or later)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationManager.IMPORTANCE_HIGH)
 
             // Provide a large icon, shown with the notification in the
             // notification drawer on devices running Android 3.0 or later.
-            .setLargeIcon(picture)
+            //.setLargeIcon(picture)
 
             // Set ticker text (preview) information for this notification.
             .setTicker(ticker)
 
             // Show a number. This is useful when stacking notifications of
             // a single type.
-            .setNumber(number)
+            //.setNumber(number)
 
             // If this notification relates to a past or upcoming event, you
             // should set the relevant time information using the setWhen
@@ -104,7 +110,8 @@ public class TextNotificationManager {
                     PendingIntent.getActivity(
                             context,
                             0,
-                            new Intent(Intent.ACTION_VIEW, Uri.parse("https://dev.campbellcrowley.com/pc")),
+                            // new Intent(Intent.ACTION_VIEW, Uri.parse("https://dev.campbellcrowley.com/pc")),
+                            new Intent(context, MainActivity.class),
                             PendingIntent.FLAG_UPDATE_CURRENT))
 
             // Show expanded text content on devices running Android 4.1 or

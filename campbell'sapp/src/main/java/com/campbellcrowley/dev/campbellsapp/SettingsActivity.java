@@ -19,6 +19,7 @@ import android.preference.RingtonePreference;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -147,6 +148,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
     setupActionBar();
   }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+  }
+
   /**
    * Set up the {@link android.app.ActionBar}, if the API is available.
    */
@@ -237,6 +250,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
       final String[] keys = {KEY_NOTIF_POWER_ON, KEY_NOTIF_POWER_OFF, KEY_NOTIF_POWER_PRESSED, KEY_NOTIF_POWER_HELD, KEY_NOTIF_RESET_PRESSED, KEY_NOTIF_WAKE_EVENT};
       for (int i = 0; i < keys.length; i++) {
         if (key.equals(keys[i])) {
+          Log.i("SettingsActivity", "Shared preferences changed: " + key + " to " + sharedPreferences.getBoolean(key, false));
           if (sharedPreferences.getBoolean(key, false)) {
             FirebaseMessaging.getInstance().subscribeToTopic(key);
           } else {
@@ -249,6 +263,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
   }
 
   private void updateAllNotificationTopicSubscriptions(SharedPreferences sharedPreferences, boolean globalIsEnabled) {
+    Log.i("SettingsActivity", "Updating all notification preferences (global: " + globalIsEnabled + ")");
     final String[] keys = {KEY_NOTIF_POWER_ON, KEY_NOTIF_POWER_OFF, KEY_NOTIF_POWER_PRESSED, KEY_NOTIF_POWER_HELD, KEY_NOTIF_RESET_PRESSED, KEY_NOTIF_WAKE_EVENT};
     for (int i = 0; i < keys.length; i++) {
       if (globalIsEnabled && sharedPreferences.getBoolean(keys[i], false)) {
@@ -275,7 +290,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
       // to their values. When their values change, their summaries are
       // updated to reflect the new value, per the Android Design
       // guidelines.
-      bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+      bindPreferenceSummaryToValue(findPreference("notification_new_message_ringtone"));
     }
 
     @Override
