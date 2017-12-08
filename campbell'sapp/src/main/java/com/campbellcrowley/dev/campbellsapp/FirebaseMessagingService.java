@@ -23,6 +23,15 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         String messageText = message.getData().get("message");
         if (messageText.equals(SettingsActivity.KEY_NOTIF_POWER_PRESSED) || messageText.equals(SettingsActivity.KEY_NOTIF_POWER_HELD) || messageText.equals(SettingsActivity.KEY_NOTIF_RESET_PRESSED) || messageText.equals(SettingsActivity.KEY_NOTIF_WAKE_EVENT)) {
           moreText = "Received response from the server confirming this event was acted upon.";
+          if (messageText.equals(SettingsActivity.KEY_NOTIF_POWER_PRESSED)) {
+            messageText = "Power Pressed";
+          } else if (messageText.equals(SettingsActivity.KEY_NOTIF_POWER_HELD)) {
+            messageText = "Power Held";
+          } else if (messageText.equals(SettingsActivity.KEY_NOTIF_RESET_PRESSED)) {
+            messageText = "Reset Held";
+          } else if (messageText.equals(SettingsActivity.KEY_NOTIF_WAKE_EVENT)) {
+            messageText = "Computer Awakened";
+          }
         } else if (messageText.equals(SettingsActivity.KEY_NOTIF_POWER_ON)) {
           moreText = "The computer was turned on!";
         } else if (messageText.equals(SettingsActivity.KEY_NOTIF_POWER_OFF)) {

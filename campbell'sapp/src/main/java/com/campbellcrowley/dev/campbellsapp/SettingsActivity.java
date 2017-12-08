@@ -10,6 +10,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -48,6 +49,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
   public static final String KEY_NOTIF_RESET_PRESSED = "notification_reset_pressed";
   public static final String KEY_NOTIF_WAKE_EVENT = "notification_wake_event";
   public static final String KEY_NOTIF_WIDGET_EVENT = "notification_widget_event";
+  public static final String KEY_SIGNED_IN = "signed_in";
   /**
    * A preference value change listener that updates the preference's summary
    * to reflect its new value.
@@ -99,6 +101,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
       return true;
     }
   };
+  final String[] notificationKeys = {KEY_NOTIF_POWER_ON, KEY_NOTIF_POWER_OFF, KEY_NOTIF_POWER_PRESSED, KEY_NOTIF_POWER_HELD, KEY_NOTIF_RESET_PRESSED, KEY_NOTIF_WAKE_EVENT};
 
   /**
    * Helper method to determine if the device has an extra-large screen. For
@@ -140,6 +143,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
     return PreferenceManager
             .getDefaultSharedPreferences(getAppContext())
             .getString(key, "");
+  }
+
+  public static void updateSignInState(boolean signedIn) {
+    DataSyncPreferenceFragment.isSignedIn = signedIn;
+    if (DataSyncPreferenceFragment.signInPref != null)
+      DataSyncPreferenceFragment.signInPref.setChecked(signedIn);
   }
 
   @Override
@@ -184,14 +193,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
   }
 
   /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean onIsMultiPane() {
-    return isXLargeTablet(this);
-  }
-
-  /**
    * This fragment shows general preferences only. It is used when the
    * activity is showing a two-pane settings UI.
    */
@@ -226,6 +227,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
    * {@inheritDoc}
    */
   @Override
+  public boolean onIsMultiPane() {
+    return isXLargeTablet(this);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public void onBuildHeaders(List<Header> target) {
     loadHeadersFromResource(R.xml.pref_headers, target);
@@ -247,9 +256,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
     if (key.equals(KEY_NOTIF_GLOBAL_ENABLE)) {
       updateAllNotificationTopicSubscriptions(sharedPreferences, sharedPreferences.getBoolean(KEY_NOTIF_GLOBAL_ENABLE, false));
     } else if (sharedPreferences.getBoolean(KEY_NOTIF_GLOBAL_ENABLE, false)) {
-      final String[] keys = {KEY_NOTIF_POWER_ON, KEY_NOTIF_POWER_OFF, KEY_NOTIF_POWER_PRESSED, KEY_NOTIF_POWER_HELD, KEY_NOTIF_RESET_PRESSED, KEY_NOTIF_WAKE_EVENT};
-      for (int i = 0; i < keys.length; i++) {
-        if (key.equals(keys[i])) {
+      for (int i = 0; i < notificationKeys.length; i++) {
+        if (key.equals(notificationKeys[i])) {
           Log.i("SettingsActivity", "Shared preferences changed: " + key + " to " + sharedPreferences.getBoolean(key, false));
           if (sharedPreferences.getBoolean(key, false)) {
             FirebaseMessaging.getInstance().subscribeToTopic(key);
@@ -259,17 +267,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
           break;
         }
       }
+    } else {
+      Log.i("SettingsActivity", "Unknown key: " + key);
     }
   }
 
   private void updateAllNotificationTopicSubscriptions(SharedPreferences sharedPreferences, boolean globalIsEnabled) {
     Log.i("SettingsActivity", "Updating all notification preferences (global: " + globalIsEnabled + ")");
-    final String[] keys = {KEY_NOTIF_POWER_ON, KEY_NOTIF_POWER_OFF, KEY_NOTIF_POWER_PRESSED, KEY_NOTIF_POWER_HELD, KEY_NOTIF_RESET_PRESSED, KEY_NOTIF_WAKE_EVENT};
-    for (int i = 0; i < keys.length; i++) {
-      if (globalIsEnabled && sharedPreferences.getBoolean(keys[i], false)) {
-        FirebaseMessaging.getInstance().subscribeToTopic(keys[i]);
+    for (int i = 0; i < notificationKeys.length; i++) {
+      if (globalIsEnabled && sharedPreferences.getBoolean(notificationKeys[i], false)) {
+        FirebaseMessaging.getInstance().subscribeToTopic(notificationKeys[i]);
       } else {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(keys[i]);
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(notificationKeys[i]);
       }
     }
   }
@@ -310,6 +319,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
    */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class DataSyncPreferenceFragment extends PreferenceFragment {
+    public static CheckBoxPreference signInPref;
+    public static boolean isSignedIn = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -320,8 +332,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
       // to their values. When their values change, their summaries are
       // updated to reflect the new value, per the Android Design
       // guidelines.
-      bindPreferenceSummaryToValue(findPreference("display_name"));
+      // bindPreferenceSummaryToValue(findPreference("display_name"));
       bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+      signInPref = (CheckBoxPreference) findPreference(KEY_SIGNED_IN);
+      signInPref.setChecked(isSignedIn);
+      signInPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object o) {
+          boolean newVal = (boolean) o;
+          Log.i("SettingsActivity", "Setting signed in state to " + newVal);
+          if (newVal) MainActivity.signIn();
+          else MainActivity.signOut();
+          return true;
+        }
+      });
     }
 
     @Override

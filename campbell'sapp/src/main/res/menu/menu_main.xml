@@ -2,11 +2,11 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.campbellcrowley.dev.campbellsapp.MainActivity">
-    <item
+    <!-- <item
         android:id="@+id/action_signinout"
         android:orderInCategory="1"
         android:title="@string/action_signinout"
-        app:showAsAction="never"/>
+        app:showAsAction="never"/> -->
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

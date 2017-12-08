@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditTextPreference
+    <!-- <EditTextPreference
         android:capitalize="words"
         android:defaultValue="@string/pref_default_display_name"
         android:inputType="textCapWords"
@@ -8,7 +8,7 @@
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="@string/pref_title_display_name"/>
+        android:title="@string/pref_title_display_name"/> -->
 
     <ListPreference
         android:defaultValue="60"

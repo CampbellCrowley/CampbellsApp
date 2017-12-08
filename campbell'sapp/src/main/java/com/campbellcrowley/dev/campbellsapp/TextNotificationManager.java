@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -60,8 +61,11 @@ public class TextNotificationManager {
     final String text = moreText;
     final long[] vibrateOn = new long[]{0, 700, 100, 50, 100, 50};
     Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    v.vibrate(1000);
-    v.cancel();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      v.vibrate(VibrationEffect.createWaveform(vibrateOn, -1));
+    } else {
+      v.vibrate(vibrateOn, -1);
+    }
 
     final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "PCStatusChannel")
 
@@ -70,8 +74,6 @@ public class TextNotificationManager {
             .setDefaults(Notification.DEFAULT_ALL)
 
             .setVisibility(Notification.VISIBILITY_PUBLIC)
-
-            .setVibrate(SettingsActivity.getBoolean("notification_new_message_vibrate") ? vibrateOn : new long[]{})
 
             .setSound(Uri.parse(SettingsActivity.getString("notification_new_message_ringtone")))
 
@@ -145,7 +147,7 @@ public class TextNotificationManager {
             .setAutoCancel(true);
 
     NotificationChannel mChannel = null;
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       mChannel = new NotificationChannel("PCStatusChannel", title, NotificationManager.IMPORTANCE_DEFAULT);
     }
 

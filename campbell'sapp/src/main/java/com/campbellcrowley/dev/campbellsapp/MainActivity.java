@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, PC
   private static TokenState tokenState = UNVALIDATED;
   private static int userLevel = 0;
   private static Context context;
+  private static MainActivity instance;
   /**
    * The {@link android.support.v4.view.PagerAdapter} that will provide
    * fragments for each of the sections. We use a
@@ -73,6 +74,10 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, PC
   private ViewPager mViewPager;
   private GoogleSignInClient mGoogleSignInClient;
   private AsyncResponse asyncTaskDelegate = null;
+
+  MainActivity() {
+    instance = this;
+  }
 
   public static TokenState getTokenState() {
     return tokenState;
@@ -92,6 +97,32 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, PC
 
   public static Context getAppContext() {
     return MainActivity.context;
+  }
+
+  public static void signIn() {
+    if (MainActivity.getAccount() != null) {
+      Log.e("MainActivitySignIn", "Sign in requested but a user is already signed in!");
+      return;
+    }
+    Intent intent = instance.mGoogleSignInClient.getSignInIntent();
+    instance.startActivityForResult(intent, RC_SIGN_IN);
+  }
+
+  public static void signOut() {
+    if (MainActivity.getAccount() == null) {
+      Log.e("MainActivitySignIn", "Sign out requested but no user is signed in!");
+      return;
+    }
+    instance.mGoogleSignInClient.signOut().addOnCompleteListener(instance, new OnCompleteListener<Void>() {
+      @Override
+      public void onComplete(@NonNull Task<Void> task) {
+        instance.showMessage("Signed out");
+        tokenState = UNVALIDATED;
+        userLevel = 0;
+        PCStatusFragment.ToggleButtonEnabled(userLevel >= 5);
+        SettingsActivity.updateSignInState(false);
+      }
+    });
   }
 
   @Override
@@ -161,23 +192,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, PC
     // as you specify a parent activity in AndroidManifest.xml.
     int id = item.getItemId();
 
-    if (id == R.id.action_signinout) {
-      if (getAccount() == null) {
-        Intent intent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(intent, RC_SIGN_IN);
-      } else {
-        mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
-          @Override
-          public void onComplete(@NonNull Task<Void> task) {
-            showMessage("Signed out");
-            tokenState = UNVALIDATED;
-            userLevel = 0;
-            PCStatusFragment.ToggleButtonEnabled(userLevel >= 5);
-          }
-        });
-      }
-      return true;
-    } else if (id == R.id.action_settings) {
+    if (id == R.id.action_settings) {
       Intent intent = new Intent(this, SettingsActivity.class);
       startActivity(intent);
       return true;
@@ -233,11 +248,13 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, PC
         userLevel = Integer.parseInt(output.get(i).substring(output.get(i).indexOf("(") + 1, output.get(i).indexOf(")")));
         showMessage("Authenticated " + getAccount().getGivenName() + " (" + userLevel + ")");
         PCStatusFragment.ToggleButtonEnabled(userLevel >= 5);
+        SettingsActivity.updateSignInState(true);
       } else if (output.get(i).indexOf("Invalid token") == 0) {
         tokenState = INVALID;
         userLevel = 0;
         showMessage("Failed to authenticate " + getAccount().getGivenName());
         PCStatusFragment.ToggleButtonEnabled(userLevel >= 5);
+        SettingsActivity.updateSignInState(false);
       }
     }
     if (output.size() == 0) {
