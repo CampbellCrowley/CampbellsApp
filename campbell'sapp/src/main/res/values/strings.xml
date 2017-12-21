@@ -5,7 +5,6 @@
     <string name="tab_text_3">Student Database</string>
     <string name="tab_text_4">PC Status</string>
     <string name="action_settings">Settings</string>
-    <string name="action_signinout">Sign In/Out</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="timer_format">This is the timer section. AKA section: %d</string>
     <string name="pcstatus_format">The computer is currently %s</string>
@@ -73,7 +72,7 @@
     <string name="pref_title_reset_pressed_notification">Reset button pressed</string>
     <string name="pref_title_wake_notification">Wake sent to computer</string>
     <string name="pref_title_widget_event">Widget event</string>
-    <string name="pref_title_show_display_name">Show who triggered event</string>
+    <!-- <string name="pref_title_forbidden_attempt">Anyone makes a forbidden request</string> -->
 
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>

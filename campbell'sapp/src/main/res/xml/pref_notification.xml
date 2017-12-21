@@ -59,7 +59,7 @@
     <!-- <SwitchPreference
         android:defaultValue="true"
         android:dependency="notification_new_message"
-        android:key="notification_show_display_name"
-        android:title="@string/pref_title_show_display_name"/> -->
+        android:key="notification_forbidden_attempt"
+        android:title="@string/pref_title_forbidden_attempt"/> -->
 
 </PreferenceScreen>

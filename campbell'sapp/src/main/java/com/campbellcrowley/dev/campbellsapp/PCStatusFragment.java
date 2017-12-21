@@ -1,9 +1,11 @@
 package com.campbellcrowley.dev.campbellsapp;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -13,6 +15,13 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.BarGraphSeries;
@@ -37,7 +46,6 @@ import java.util.TimerTask;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import static com.campbellcrowley.dev.campbellsapp.MainActivity.getToken;
 import static com.campbellcrowley.dev.campbellsapp.MainActivity.getUserLevel;
 
 /**
@@ -57,6 +65,7 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
   private static boolean stateNow = false;
   private static AsyncResponse asyncTaskDelegate = null;
   private static Timer Interval;
+  private static String idToken = "";
 
   public PCStatusFragment() {
     CookieManager cookieManager = new CookieManager();
@@ -72,15 +81,55 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
     return fragment;
   }
 
-  public static void sendAction(String action) {
-    sendRequest task = new sendRequest();
+  public static void sendAction(Context context, final String action) {
+    final sendRequest task = new sendRequest();
     task.delegate = asyncTaskDelegate;
-    try {
-      task.execute(new URL("https://dev.campbellcrowley.com/secure/pc/" + action));
-    } catch (MalformedURLException e) {
-      clearRows();
-      addRow("Failed to get latest info! Campbell broke something...");
-      e.printStackTrace();
+    task.context = context;
+    if (MainActivity.getToken().length() > 0) {
+      idToken = MainActivity.getToken();
+      try {
+        Log.i("PCStatusFragment", "Sending request: " + action);
+        task.execute(new URL("https://dev.campbellcrowley.com/secure/pc/" + action));
+      } catch (MalformedURLException e) {
+        clearRows();
+        addRow("Failed to get latest info! Campbell broke something...");
+        e.printStackTrace();
+      }
+    } else {
+      Log.i("PCStatusFragment", "Sending request 2.1: " + action);
+      GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(context.getString(R.string.server_client_id)).build();
+      GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
+      mGoogleSignInClient.silentSignIn().addOnCompleteListener(
+              new OnCompleteListener<GoogleSignInAccount>() {
+                @Override
+                public void onComplete(@NonNull Task<GoogleSignInAccount> task2) {
+                  if (task2.isSuccessful()) {
+                    idToken = task2.getResult().getIdToken();
+                    try {
+                      Log.i("PCStatusFragment", "Sending request 2.2: " + action);
+                      task.execute(new URL("https://dev.campbellcrowley.com/secure/pc/" + action));
+                    } catch (MalformedURLException e) {
+                      clearRows();
+                      addRow("Failed to get latest info! Campbell broke something...");
+                      e.printStackTrace();
+                    }
+                  }
+                }
+              }).addOnFailureListener(
+              new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                  try {
+                    Log.i("PCStatusFragment", "Sending request 2.3: " + action);
+                    task.execute(new URL("https://dev.campbellcrowley.com/secure/pc/" + action));
+                  } catch (MalformedURLException e2) {
+                    clearRows();
+                    addRow("Failed to get latest info! Campbell broke something...");
+                    e2.printStackTrace();
+                  }
+                }
+              }
+      );
     }
   }
 
@@ -128,7 +177,7 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
     (Interval = new Timer()).scheduleAtFixedRate(new TimerTask() {
       @Override
       public void run() {
-        sendAction("get-info");
+        sendAction(getContext(), "get-info");
       }
     }, 0, 8000);
   }
@@ -175,9 +224,12 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
           e.printStackTrace();
         }
       } else {
+        TextNotificationManager.notify(this.getContext(), "Server Response", output.get(0), 0);
         showMessage(output.get(0));
         ToggleButtonEnabled(getUserLevel() >= 5);
       }
+    } else {
+      Log.i("PCStatusFragment", "THIS IS THE OTHER ELSE STATEMENT");
     }
   }
 
@@ -209,7 +261,7 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
       @Override
       public String formatLabel(double value, boolean isValueX) {
         if (isValueX) {
-          String[] DOWTitles = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+          final String[] DOWTitles = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
           int newValue = (int) Math.floor(value);
           if (newValue >= 0 && newValue < DOWTitles.length) {
             return DOWTitles[newValue];
@@ -249,7 +301,7 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
       final String finalRequest = request;
       buttonParent.getChildAt(i).setOnClickListener(new View.OnClickListener() {
         public void onClick(View v) {
-          sendAction(finalRequest);
+          sendAction(getContext(), finalRequest);
         }
       });
     }
@@ -278,11 +330,12 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
 
   private static class sendRequest extends AsyncTask<URL, Void, List<String>> {
     private AsyncResponse delegate = null;
+    private Context context = null;
 
     protected List<String> doInBackground(URL... urls) {
       List<String> responses = new ArrayList<>();
       for (int i = 0; i < urls.length; i++) {
-        responses.add(sendHttpRequest(urls[i], "idtoken=" + getToken(), "POST"));
+        responses.add(sendHttpRequest(urls[i], "idtoken=" + idToken, "POST"));
       }
       return responses;
     }
@@ -298,7 +351,7 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
         connection.setRequestMethod(method);
         connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         connection.setRequestProperty("Content-Length", Integer.toString(postDataBytes.length));
-        connection.setRequestProperty("Cookie", "token=" + getToken());
+        connection.setRequestProperty("Cookie", "token=" + idToken);
         connection.getOutputStream().write(postDataBytes);
 
         Reader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
@@ -306,6 +359,7 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
         StringBuilder sb = new StringBuilder();
         for (int c; (c = in.read()) >= 0; )
           sb.append((char) c);
+        in.close();
         return sb.toString();
       } catch (UnsupportedEncodingException e) {
         e.printStackTrace();
@@ -325,8 +379,14 @@ public class PCStatusFragment extends Fragment implements AsyncResponse {
     @Override
     protected void onPostExecute(List<String> responses) {
       Log.i("PCStatusFragment", "Downloaded " + responses.size() + " responses.");
-      if (delegate != null)
-        delegate.processFinish(responses);
+      if (delegate != null) delegate.processFinish(responses);
+      else if (responses.get(0).equals("You are not authorized to do that.") && context != null) {
+        String additionalText = "";
+        if (idToken.length() == 0) {
+          additionalText = " It appears that you are not signed in. This will not work unless you are signed in and have proper permissions.";
+        }
+        TextNotificationManager.notify(context, "Action Failed", responses.get(0) + additionalText, 0);
+      }
     }
   }
 }

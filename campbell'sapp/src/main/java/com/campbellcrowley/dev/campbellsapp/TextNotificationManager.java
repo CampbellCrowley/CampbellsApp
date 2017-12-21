@@ -7,10 +7,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -30,28 +30,20 @@ public class TextNotificationManager {
   /**
    * Shows the notification, or updates a previously shown notification of
    * this type, with the given parameters.
-   * <p>
-   * TODO: Customize this method's arguments to present relevant content in
-   * the notification.
-   * <p>
-   * TODO: Customize the contents of this method to tweak the behavior and
-   * presentation of text manager notifications. Make
-   * sure to follow the
    * <a href="https://developer.android.com/design/patterns/notifications.html">
-   * Notification design guidelines</a> when doing so.
+   * Notification design guidelines</a>.
    *
    * @see #cancel(Context)
    */
   public static void notify(final Context context,
                             final String mainText, final String moreText, final long eventTime) {
-    boolean notificationsEnabled = SettingsActivity.getBoolean(SettingsActivity.KEY_NOTIF_GLOBAL_ENABLE);
+    final boolean notificationsEnabled = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SettingsActivity.KEY_NOTIF_GLOBAL_ENABLE, false);
     Log.i("NotificationManager", "Notifications enabled: " + notificationsEnabled);
     if (!notificationsEnabled) return;
 
     //final Resources res = context.getResources();
 
     // This image is used as the notification's large icon (thumbnail).
-    // TODO: Remove this if your notification has no relevant thumbnail.
     //final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
 
 
@@ -75,7 +67,7 @@ public class TextNotificationManager {
 
             .setVisibility(Notification.VISIBILITY_PUBLIC)
 
-            .setSound(Uri.parse(SettingsActivity.getString("notification_new_message_ringtone")))
+            // .setSound(Uri.parse(SettingsActivity.getString("notification_new_message_ringtone")))
 
             // Set required fields, including the small icon, the
             // notification title, and text.

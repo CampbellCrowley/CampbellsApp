@@ -27,8 +27,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.List;
 
-import static com.campbellcrowley.dev.campbellsapp.MainActivity.getAppContext;
-
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
  * handset devices, settings are presented as a single list. On tablets,
@@ -49,6 +47,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
   public static final String KEY_NOTIF_RESET_PRESSED = "notification_reset_pressed";
   public static final String KEY_NOTIF_WAKE_EVENT = "notification_wake_event";
   public static final String KEY_NOTIF_WIDGET_EVENT = "notification_widget_event";
+  public static final String KEY_NOTIF_FORBIDDEN_EVENT = "notification_forbidden_event";
   public static final String KEY_SIGNED_IN = "signed_in";
   /**
    * A preference value change listener that updates the preference's summary
@@ -101,7 +100,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
       return true;
     }
   };
-  final String[] notificationKeys = {KEY_NOTIF_POWER_ON, KEY_NOTIF_POWER_OFF, KEY_NOTIF_POWER_PRESSED, KEY_NOTIF_POWER_HELD, KEY_NOTIF_RESET_PRESSED, KEY_NOTIF_WAKE_EVENT};
+  final String[] notificationKeys = {KEY_NOTIF_POWER_ON, KEY_NOTIF_POWER_OFF, KEY_NOTIF_POWER_PRESSED, KEY_NOTIF_POWER_HELD, KEY_NOTIF_RESET_PRESSED, KEY_NOTIF_WAKE_EVENT, KEY_NOTIF_FORBIDDEN_EVENT};
 
   /**
    * Helper method to determine if the device has an extra-large screen. For
@@ -133,15 +132,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
                     .getString(preference.getKey(), ""));
   }
 
-  public static boolean getBoolean(String key) {
+  public static boolean getPrefBoolean(String key, Context context) {
     return PreferenceManager
-            .getDefaultSharedPreferences(getAppContext())
+            .getDefaultSharedPreferences(context)
             .getBoolean(key, false);
   }
 
-  public static String getString(String key) {
+  public static String getPrefString(String key, Context context) {
     return PreferenceManager
-            .getDefaultSharedPreferences(getAppContext())
+            .getDefaultSharedPreferences(context)
             .getString(key, "");
   }
 
