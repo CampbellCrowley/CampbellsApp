@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, PC
     ValidateTokenTask task = new ValidateTokenTask();
     task.delegate = asyncTaskDelegate;
     try {
-      showMessage("Validating...");
+      // showMessage("Validating...");
       task.execute(new URL("https://dev.campbellcrowley.com/tokensignin"));
     } catch (MalformedURLException e) {
       showMessage("Failed to authenticate! Campbell broke something...");
@@ -255,6 +255,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse, PC
         showMessage("Failed to authenticate " + getAccount().getGivenName());
         PCStatusFragment.ToggleButtonEnabled(userLevel >= 5);
         SettingsActivity.updateSignInState(false);
+      } else {
+        Log.w("MainActivitySignIn", "UNKNOWN RESPONSE FROM SERVER: " + output.get(i));
       }
     }
     if (output.size() == 0) {

@@ -8,57 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:275682034627:android:6f18a8916c3f1927",
-        "android_client_info": {
-          "package_name": "com.google.signin"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "275682034627-pilkveg9ccu3id9e84dfiel61qkpo9p1.apps.googleusercontent.com",
-          "client_type": 3
-        },
-        {
-          "client_id": "275682034627-qe6qsb6jbsonef00uoe5vrt5qsgfemc9.apps.googleusercontent.com",
-          "client_type": 3
-        },
-        {
-          "client_id": "275682034627-5qs9b5t5r87ddf6ciolbpbif23dv0n5o.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.google.signin",
-            "certificate_hash": "9e750bb534b39109b25baab83728065b8ec60a57"
-          }
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAumFlqziu5i7Ua60mDOqlxzrqpQDE9P48"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 2,
-          "analytics_property": {
-            "tracking_id": "UA-89923351-2"
-          }
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "275682034627-pilkveg9ccu3id9e84dfiel61qkpo9p1.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:275682034627:android:0bd089d25a8d1658",
         "android_client_info": {
           "package_name": "com.campbellcrowley.dev.campbellsapp"
@@ -76,10 +25,6 @@
             "package_name": "com.campbellcrowley.dev.campbellsapp",
             "certificate_hash": "9e750bb534b39109b25baab83728065b8ec60a57"
           }
-        },
-        {
-          "client_id": "275682034627-qe6qsb6jbsonef00uoe5vrt5qsgfemc9.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
