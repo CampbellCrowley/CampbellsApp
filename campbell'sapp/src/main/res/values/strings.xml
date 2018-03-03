@@ -72,6 +72,7 @@
     <string name="pref_title_reset_pressed_notification">Reset button pressed</string>
     <string name="pref_title_wake_notification">Wake sent to computer</string>
     <string name="pref_title_widget_event">Widget event</string>
+    <string name="pref_title_message">Received other server message</string>
     <!-- <string name="pref_title_forbidden_attempt">Anyone makes a forbidden request</string> -->
 
     <string name="pref_title_ringtone">Ringtone</string>

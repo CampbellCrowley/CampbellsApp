@@ -22,104 +22,121 @@ import android.util.Log;
  * class to create notifications in a backward-compatible way.
  */
 public class TextNotificationManager {
-  /**
-   * The unique identifier for this type of notification.
-   */
-  private static final String NOTIFICATION_TAG = "TextManager";
+    /**
+     * The unique identifier for this type of notification.
+     */
+    private static final String NOTIFICATION_TAG = "TextManager";
 
-  /**
-   * Shows the notification, or updates a previously shown notification of
-   * this type, with the given parameters.
-   * <a href="https://developer.android.com/design/patterns/notifications.html">
-   * Notification design guidelines</a>.
-   *
-   * @see #cancel(Context)
-   */
-  public static void notify(final Context context,
-                            final String mainText, final String moreText, final long eventTime) {
-    final boolean notificationsEnabled = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SettingsActivity.KEY_NOTIF_GLOBAL_ENABLE, false);
-    Log.i("NotificationManager", "Notifications enabled: " + notificationsEnabled);
-    if (!notificationsEnabled) return;
-
-    //final Resources res = context.getResources();
-
-    // This image is used as the notification's large icon (thumbnail).
-    //final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
-
-
-    final long finalEventTime = eventTime == 0 ? System.currentTimeMillis() : eventTime;
-    final String ticker = mainText;
-    final String title = mainText;
-    final String text = moreText;
-    final long[] vibrateOn = new long[]{0, 700, 100, 50, 100, 50};
-    Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      v.vibrate(VibrationEffect.createWaveform(vibrateOn, -1));
-    } else {
-      v.vibrate(vibrateOn, -1);
+    /**
+     * Shows the notification, or updates a previously shown notification of
+     * this type, with the given parameters.
+     * <a href="https://developer.android.com/design/patterns/notifications.html">
+     * Notification design guidelines</a>.
+     *
+     * @param context
+     * @param mainText
+     * @param moreText
+     * @param eventTime
+     * @see #cancel(Context)
+     */
+    public static void notify(final Context context,
+                              final String mainText, final String moreText, final long eventTime) {
+        notify(context, mainText, moreText, eventTime, "DefaultTag");
     }
 
-    final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "PCStatusChannel")
+    /**
+     * Shows the notification, or updates a previously shown notification of
+     * this type, with the given parameters.
+     * <a href="https://developer.android.com/design/patterns/notifications.html">
+     * Notification design guidelines</a>.
+     *
+     * @see #cancel(Context)
+     */
+    public static void notify(final Context context,
+                              final String mainText, final String moreText, final long eventTime, final String tagOverride) {
+        final boolean notificationsEnabled = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SettingsActivity.KEY_NOTIF_GLOBAL_ENABLE, false);
+        Log.i("NotificationManager", "Notifications enabled: " + notificationsEnabled);
+        if (!notificationsEnabled) return;
 
-            // Set appropriate defaults for the notification light, sound,
-            // and vibration.
-            .setDefaults(Notification.DEFAULT_ALL)
+        //final Resources res = context.getResources();
 
-            .setVisibility(Notification.VISIBILITY_PUBLIC)
+        // This image is used as the notification's large icon (thumbnail).
+        //final Bitmap picture = BitmapFactory.decodeResource(res, R.drawable.example_picture);
 
-            // .setSound(Uri.parse(SettingsActivity.getString("notification_new_message_ringtone")))
 
-            // Set required fields, including the small icon, the
-            // notification title, and text.
-            .setSmallIcon(R.drawable.ic_stat_text_manager)
-            .setContentTitle(title)
-            .setContentText(text)
+        final long finalEventTime = eventTime == 0 ? System.currentTimeMillis() : eventTime;
+        final String ticker = mainText;
+        final String title = mainText;
+        final String text = moreText;
+        final long[] vibrateOn = new long[]{0, 700, 100, 50, 100, 50};
+        Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createWaveform(vibrateOn, -1));
+        } else {
+            v.vibrate(vibrateOn, -1);
+        }
 
-            // All fields below this line are optional.
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "PCStatusChannel")
 
-            // Use a default priority (recognized on devices running Android
-            // 4.1 or later)
-            .setPriority(NotificationManager.IMPORTANCE_HIGH)
+                // Set appropriate defaults for the notification light, sound,
+                // and vibration.
+                .setDefaults(Notification.DEFAULT_ALL)
 
-            // Provide a large icon, shown with the notification in the
-            // notification drawer on devices running Android 3.0 or later.
-            //.setLargeIcon(picture)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
 
-            // Set ticker text (preview) information for this notification.
-            .setTicker(ticker)
+                // .setSound(Uri.parse(SettingsActivity.getString("notification_new_message_ringtone")))
 
-            // Show a number. This is useful when stacking notifications of
-            // a single type.
-            //.setNumber(number)
+                // Set required fields, including the small icon, the
+                // notification title, and text.
+                .setSmallIcon(R.drawable.ic_stat_text_manager)
+                .setContentTitle(title)
+                .setContentText(text)
 
-            // If this notification relates to a past or upcoming event, you
-            // should set the relevant time information using the setWhen
-            // method below. If this call is omitted, the notification's
-            // timestamp will by set to the time at which it was shown.
-            .setWhen(finalEventTime)
+                // All fields below this line are optional.
 
-            // Set the pending intent to be initiated when the user touches
-            // the notification.
-            .setContentIntent(
-                    PendingIntent.getActivity(
-                            context,
-                            0,
-                            // new Intent(Intent.ACTION_VIEW, Uri.parse("https://dev.campbellcrowley.com/pc")),
-                            new Intent(context, MainActivity.class),
-                            PendingIntent.FLAG_UPDATE_CURRENT))
+                // Use a default priority (recognized on devices running Android
+                // 4.1 or later)
+                .setPriority(NotificationManager.IMPORTANCE_HIGH)
 
-            // Show expanded text content on devices running Android 4.1 or
-            // later.
-            .setStyle(new NotificationCompat.BigTextStyle()
-                    .bigText(text)
-                    .setBigContentTitle(title)
-                    .setSummaryText("Sent action"))
+                // Provide a large icon, shown with the notification in the
+                // notification drawer on devices running Android 3.0 or later.
+                //.setLargeIcon(picture)
 
-            // Example additional actions for this notification. These will
-            // only show on devices running Android 4.1 or later, so you
-            // should ensure that the activity in this notification's
-            // content intent provides access to the same actions in
-            // another way.
+                // Set ticker text (preview) information for this notification.
+                .setTicker(ticker)
+
+                // Show a number. This is useful when stacking notifications of
+                // a single type.
+                //.setNumber(number)
+
+                // If this notification relates to a past or upcoming event, you
+                // should set the relevant time information using the setWhen
+                // method below. If this call is omitted, the notification's
+                // timestamp will by set to the time at which it was shown.
+                .setWhen(finalEventTime)
+
+                // Set the pending intent to be initiated when the user touches
+                // the notification.
+                .setContentIntent(
+                        PendingIntent.getActivity(
+                                context,
+                                0,
+                                // new Intent(Intent.ACTION_VIEW, Uri.parse("https://dev.campbellcrowley.com/pc")),
+                                new Intent(context, MainActivity.class),
+                                PendingIntent.FLAG_UPDATE_CURRENT))
+
+                // Show expanded text content on devices running Android 4.1 or
+                // later.
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(text)
+                        .setBigContentTitle(title)
+                        .setSummaryText("Sent action"))
+
+                // Example additional actions for this notification. These will
+                // only show on devices running Android 4.1 or later, so you
+                // should ensure that the activity in this notification's
+                // content intent provides access to the same actions in
+                // another way.
             /* .addAction(
                     R.drawable.ic_action_stat_share,
                     res.getString(R.string.action_share),
@@ -135,42 +152,56 @@ public class TextNotificationManager {
                     res.getString(R.string.action_reply),
                     null)*/
 
-            // Automatically dismiss the notification when it is touched.
-            .setAutoCancel(true);
+                // Automatically dismiss the notification when it is touched.
+                .setAutoCancel(true);
 
-    NotificationChannel mChannel = null;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      mChannel = new NotificationChannel("PCStatusChannel", title, NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationChannel mChannel = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mChannel = new NotificationChannel("PCStatusChannel", title, NotificationManager.IMPORTANCE_DEFAULT);
+        }
+
+        notify(context, builder.build(), mChannel, tagOverride);
     }
 
-    notify(context, builder.build(), mChannel);
-  }
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
+    private static void notify(final Context context, final Notification notification, final NotificationChannel channel) {
+        notify(context, notification, channel, NOTIFICATION_TAG);
+    }
 
-  @TargetApi(Build.VERSION_CODES.ECLAIR)
-  private static void notify(final Context context, final Notification notification, final NotificationChannel channel) {
-    final NotificationManager nm = (NotificationManager) context
-            .getSystemService(Context.NOTIFICATION_SERVICE);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      nm.createNotificationChannel(channel);
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
+    private static void notify(final Context context, final Notification notification, final NotificationChannel channel, final String tag) {
+        final NotificationManager nm = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            nm.createNotificationChannel(channel);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+            nm.notify(tag, 0, notification);
+        } else {
+            nm.notify(tag.hashCode(), notification);
+        }
     }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-      nm.notify(NOTIFICATION_TAG, 0, notification);
-    } else {
-      nm.notify(NOTIFICATION_TAG.hashCode(), notification);
-    }
-  }
 
-  /**
-   * Cancels any notifications of this type previously shown using
-   */
-  @TargetApi(Build.VERSION_CODES.ECLAIR)
-  public static void cancel(final Context context) {
-    final NotificationManager nm = (NotificationManager) context
-            .getSystemService(Context.NOTIFICATION_SERVICE);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-      nm.cancel(NOTIFICATION_TAG, 0);
-    } else {
-      nm.cancel(NOTIFICATION_TAG.hashCode());
+    /**
+     * Cancels any notifications of this type previously shown using
+ * @param context
+     */
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
+    public static void cancel(final Context context) {
+        cancel(context, NOTIFICATION_TAG);
     }
-  }
+
+    /**
+     * Cancels any notifications of this type previously shown using
+     */
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
+    public static void cancel(final Context context, final String tag) {
+        final NotificationManager nm = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+            nm.cancel(tag, 0);
+        } else {
+            nm.cancel(tag.hashCode());
+        }
+    }
 }

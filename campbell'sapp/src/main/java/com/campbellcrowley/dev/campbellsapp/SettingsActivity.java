@@ -48,6 +48,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
   public static final String KEY_NOTIF_WAKE_EVENT = "notification_wake_event";
   public static final String KEY_NOTIF_WIDGET_EVENT = "notification_widget_event";
   public static final String KEY_NOTIF_FORBIDDEN_EVENT = "notification_forbidden_event";
+  public static final String KEY_NOTIF_MESSAGE = "notification_message";
   public static final String KEY_SIGNED_IN = "signed_in";
   /**
    * A preference value change listener that updates the preference's summary
@@ -100,7 +101,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
       return true;
     }
   };
-  final String[] notificationKeys = {KEY_NOTIF_POWER_ON, KEY_NOTIF_POWER_OFF, KEY_NOTIF_POWER_PRESSED, KEY_NOTIF_POWER_HELD, KEY_NOTIF_RESET_PRESSED, KEY_NOTIF_WAKE_EVENT, KEY_NOTIF_FORBIDDEN_EVENT};
+  final String[] notificationKeys = {KEY_NOTIF_POWER_ON, KEY_NOTIF_POWER_OFF, KEY_NOTIF_POWER_PRESSED, KEY_NOTIF_POWER_HELD, KEY_NOTIF_RESET_PRESSED, KEY_NOTIF_WAKE_EVENT, KEY_NOTIF_FORBIDDEN_EVENT, KEY_NOTIF_MESSAGE};
 
   /**
    * Helper method to determine if the device has an extra-large screen. For
@@ -298,7 +299,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
       // to their values. When their values change, their summaries are
       // updated to reflect the new value, per the Android Design
       // guidelines.
-      bindPreferenceSummaryToValue(findPreference("notification_new_message_ringtone"));
+      // bindPreferenceSummaryToValue(findPreference("notification_new_message_ringtone"));
     }
 
     @Override

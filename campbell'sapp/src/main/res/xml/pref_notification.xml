@@ -8,12 +8,12 @@
         android:title="@string/pref_title_all_notifications"/>
 
     <!-- NOTE: RingtonePreference's summary should be set to its value by the activity code. -->
-    <RingtonePreference
+    <!-- <RingtonePreference
         android:defaultValue="content://settings/system/notification_sound"
         android:dependency="notification_new_message"
         android:key="notification_new_message_ringtone"
         android:ringtoneType="notification"
-        android:title="@string/pref_title_ringtone"/>
+        android:title="@string/pref_title_ringtone"/> -->
 
     <SwitchPreference
         android:defaultValue="true"
@@ -56,6 +56,11 @@
         android:dependency="notification_new_message"
         android:key="notification_widget_event"
         android:title="@string/pref_title_widget_event"/>
+    <SwitchPreference
+        android:defaultValue="true"
+        android:dependency="notification_new_message"
+        android:key="notification_message"
+        android:title="@string/pref_title_message"/>
     <!-- <SwitchPreference
         android:defaultValue="true"
         android:dependency="notification_new_message"

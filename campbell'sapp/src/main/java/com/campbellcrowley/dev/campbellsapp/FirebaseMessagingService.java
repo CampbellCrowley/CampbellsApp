@@ -35,11 +35,13 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         messageText = "Computer Awakened";
       }
     } else if (messageText.equals(SettingsActivity.KEY_NOTIF_POWER_ON)) {
-      moreText = "The computer was turned on!";
+      moreText = messageText;
+      messageText = "The computer was turned on!";
     } else if (messageText.equals(SettingsActivity.KEY_NOTIF_POWER_OFF)) {
-      moreText = "The computer was turned off!";
+      moreText = messageText;
+      messageText = "The computer was turned off!";
     }
     Log.i("FirebaseMessage", "Notification: " + messageText + " AND " + moreText);
-    TextNotificationManager.notify(this, messageText, moreText, 0);
+    TextNotificationManager.notify(this, messageText, moreText, 0, messageText);
   }
 }
